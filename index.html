@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Faction Selector</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .faction-list {
+            text-align: left;
+            margin-right: 2rem;
+        }
+        .faction-item {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .faction-item.selected {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        .faction-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 0.5rem;
+        }
+        .selector {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dice {
+            width: 200px;
+            height: 200px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .dice::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 36deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff);
+            animation: rotate 2.5s linear infinite;
+        }
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .dice-content {
+            width: 180px;
+            height: 180px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+        .icon {
+            font-size: 3rem;
+        }
+        #result {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            min-height: 2em;
+        }
+        button {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="faction-list" id="factionList"></div>
+        <div class="selector">
+            <div class="dice">
+                <div class="dice-content">
+                    <div id="icon" class="icon"></div>
+                </div>
+            </div>
+            <div id="result">Click the button to select a random faction</div>
+            <button onclick="randomizeFaction()">Randomize Faction</button>
+            <button onclick="mulligan()">Mulligan</button>
+            <button onclick="reset()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        const factions = [
+            { name: "Fortress", icon: "fas fa-gopuram", color: "#006400" },
+            { name: "Dungeon", icon: "fas fa-dungeon", color: "#800080" },
+            { name: "Conflux", icon: "fas fa-atom", color: "#FFC0CB" },
+            { name: "Stronghold", icon: "fas fa-fist-raised", color: "#D2B48C" },
+            { name: "Rampart", icon: "fas fa-tree", color: "#00FF00" },
+            { name: "Inferno", icon: "fas fa-fire", color: "#FF0000" },
+            { name: "Castle", icon: "fas fa-chess-rook", color: "#ADD8E6" },
+            { name: "Necropolis", icon: "fas fa-skull", color: "#808080" },
+            { name: "Cove", icon: "fas fa-anchor", color: "#008080" },
+            { name: "Tower", icon: "fas fa-landmark-dome", color: "#FFFFFF", background: "#E0E0E0", border: "1px solid #A0A0A0" }
+        ];
+
+        let selectedFaction = null;
+        let selectedFactions = [];
+
+        function populateFactionList() {
+            const factionList = document.getElementById('factionList');
+            factionList.innerHTML = '';
+            factions.forEach((faction, index) => {
+                const item = document.createElement('div');
+                item.className = 'faction-item';
+                const iconStyle = `background-color: ${faction.background || faction.color}; ${faction.border ? faction.border : ''}`;
+                item.innerHTML = `
+                    <span class="faction-icon" style="${iconStyle}">
+                        <i class="${faction.icon}" style="font-size: 12px; color: ${faction.name === 'Tower' ? faction.color : 'inherit'};"></i>
+                    </span>
+                    ${faction.name}
+                `;
+                if (selectedFactions.includes(index)) {
+                    item.classList.add('selected');
+                }
+                factionList.appendChild(item);
+            });
+        }
+
+        function shuffleIcon() {
+            const iconElement = document.getElementById('icon');
+            let shuffleCount = 0;
+            const shuffleInterval = setInterval(() => {
+                const randomFaction = factions[Math.floor(Math.random() * factions.length)];
+                const iconStyle = randomFaction.name === 'Tower' 
+                    ? `color: ${randomFaction.color}; background-color: ${randomFaction.background}; border-radius: 50%; padding: 10px;`
+                    : `color: ${randomFaction.color};`;
+                iconElement.innerHTML = `<i class="${randomFaction.icon}" style="${iconStyle}"></i>`;
+                shuffleCount++;
+                if (shuffleCount >= 30) {
+                    clearInterval(shuffleInterval);
+                    const selectedIconStyle = selectedFaction.name === 'Tower'
+                        ? `color: ${selectedFaction.color}; background-color: ${selectedFaction.background}; border-radius: 50%; padding: 10px;`
+                        : `color: ${selectedFaction.color};`;
+                    iconElement.innerHTML = `<i class="${selectedFaction.icon}" style="${selectedIconStyle}"></i>`;
+                }
+            }, 50);
+        }
+
+        function randomizeFaction() {
+            const availableFactions = factions.filter((_, index) => !selectedFactions.includes(index));
+            if (availableFactions.length === 0) {
+                document.getElementById('result').textContent = "All factions have been selected!";
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * availableFactions.length);
+            selectedFaction = availableFactions[randomIndex];
+            const originalIndex = factions.indexOf(selectedFaction);
+            selectedFactions.push(originalIndex);
+            
+            shuffleIcon();
+            
+            setTimeout(() => {
+                document.getElementById('result').textContent = selectedFaction.name;
+                document.getElementById('result').style.color = selectedFaction.color;
+                if (selectedFaction.name === 'Tower') {
+                    document.getElementById('result').style.textShadow = '1px 1px 1px #A0A0A0';
+                } else {
+                    document.getElementById('result').style.textShadow = 'none';
+                }
+                populateFactionList();
+            }, 1500);
+        }
+
+        function mulligan() {
+            if (selectedFaction) {
+                const index = factions.indexOf(selectedFaction);
+                selectedFactions = selectedFactions.filter(i => i !== index);
+                randomizeFaction();
+            }
+        }
+
+        function reset() {
+            selectedFaction = null;
+            selectedFactions = [];
+            document.getElementById('icon').innerHTML = '';
+            document.getElementById('result').textContent = "Click the button to select a random faction";
+            document.getElementById('result').style.color = 'initial';
+            document.getElementById('result').style.textShadow = 'none';
+            populateFactionList();
+        }
+
+        populateFactionList();
+    </script>
+</body>
+</html>
