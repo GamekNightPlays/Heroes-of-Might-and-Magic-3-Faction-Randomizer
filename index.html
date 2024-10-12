@@ -24,9 +24,21 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
         }
+        .headline {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .headline h1 {
+            margin-bottom: 0.5rem;
+        }
+        .headline p {
+            margin-top: 0;
+            color: #666;
+        }
         .faction-list {
             text-align: left;
             margin-right: 2rem;
+            width: 150px;
         }
         .faction-item {
             margin-bottom: 0.5rem;
@@ -52,15 +64,19 @@
             flex-direction: column;
             align-items: center;
         }
-        .dice {
+        .dice-container {
             width: 200px;
             height: 200px;
-            background-color: #e0e0e0;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        .dice {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 1rem;
             position: relative;
             overflow: hidden;
         }
@@ -78,8 +94,8 @@
             }
         }
         .dice-content {
-            width: 180px;
-            height: 180px;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
             background-color: white;
             border-radius: 50%;
             display: flex;
@@ -90,16 +106,41 @@
         .icon {
             font-size: 3rem;
         }
-        #result {
+        #selected-faction {
             font-size: 1.5rem;
+            font-weight: bold;
             margin-top: 1rem;
-            min-height: 2em;
+            min-height: 1.5em;
+        }
+        #instruction {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            color: #666;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 1rem;
         }
         button {
             font-size: 1rem;
             padding: 0.5rem 1rem;
-            margin: 0.5rem;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        button i {
+            margin-right: 0.5rem;
         }
         .support-link {
             display: inline-flex;
@@ -142,25 +183,34 @@
     </style>
 </head>
 <body>
+    <div class="headline">
+        <h1>Heroes III Faction Randomizer</h1>
+        <p>by Game kNight Plays</p>
+    </div>
     <div class="container">
         <div class="faction-list" id="factionList"></div>
         <div class="selector">
-            <div class="dice">
-                <div class="dice-content">
-                    <div id="icon" class="icon"></div>
+            <div class="dice-container">
+                <div class="dice">
+                    <div class="dice-content">
+                        <div id="icon" class="icon"></div>
+                    </div>
                 </div>
             </div>
-            <div id="result">Click the button to select a random faction</div>
-            <button onclick="randomizeFaction()">Randomize Faction</button>
-            <button onclick="mulligan()">Mulligan</button>
-            <button onclick="reset()">Reset</button>
+            <div id="selected-faction"></div>
+            <div id="instruction">Click the button to select a random faction</div>
+            <div class="button-container">
+                <button onclick="reset()"><i class="fas fa-trash-alt"></i> Reset</button>
+                <button onclick="randomizeFaction()"><i class="fas fa-random"></i> Randomize Faction</button>
+                <button onclick="mulligan()"><i class="fas fa-redo"></i> Mulligan</button>
+            </div>
         </div>
     </div>
-<a href="https://buymeacoffee.com/gameknightv" class="support-link">
-    <img src="https://cdn.buymeacoffee.com/uploads/profile_pictures/2024/06/pxPT8QnFG7SWdvdG.png@300w_0e.webp" alt="Creator's Logo">
-    If you like this site, you can buy me a "sword" here
-    <span class="sword-icon">🗡️</span>
-</a>
+    <a href="#" class="support-link">
+        <img src="https://cdn.buymeacoffee.com/uploads/profile_pictures/2024/06/pxPT8QnFG7SWdvdG.png@300w_0e.webp" alt="Creator's Logo">
+        If you like this site, you can buy me a "sword" here
+        <span class="sword-icon">🗡️</span>
+    </a>
 
     <script>
         const factions = [
@@ -222,7 +272,7 @@
         function randomizeFaction() {
             const availableFactions = factions.filter((_, index) => !selectedFactions.includes(index));
             if (availableFactions.length === 0) {
-                document.getElementById('result').textContent = "All factions have been selected!";
+                document.getElementById('selected-faction').textContent = "All factions have been selected!";
                 return;
             }
             const randomIndex = Math.floor(Math.random() * availableFactions.length);
@@ -233,12 +283,12 @@
             shuffleIcon();
             
             setTimeout(() => {
-                document.getElementById('result').textContent = selectedFaction.name;
-                document.getElementById('result').style.color = selectedFaction.color;
+                document.getElementById('selected-faction').textContent = selectedFaction.name;
+                document.getElementById('selected-faction').style.color = selectedFaction.color;
                 if (selectedFaction.name === 'Tower') {
-                    document.getElementById('result').style.textShadow = '1px 1px 1px #A0A0A0';
+                    document.getElementById('selected-faction').style.textShadow = '1px 1px 1px #A0A0A0';
                 } else {
-                    document.getElementById('result').style.textShadow = 'none';
+                    document.getElementById('selected-faction').style.textShadow = 'none';
                 }
                 populateFactionList();
             }, 1500);
@@ -256,9 +306,9 @@
             selectedFaction = null;
             selectedFactions = [];
             document.getElementById('icon').innerHTML = '';
-            document.getElementById('result').textContent = "Click the button to select a random faction";
-            document.getElementById('result').style.color = 'initial';
-            document.getElementById('result').style.textShadow = 'none';
+            document.getElementById('selected-faction').textContent = "";
+            document.getElementById('selected-faction').style.color = 'initial';
+            document.getElementById('selected-faction').style.textShadow = 'none';
             populateFactionList();
         }
 
