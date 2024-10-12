@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Faction Selector</title>
+    <title>Heroes III Faction Randomizer</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         body {
@@ -14,15 +14,20 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding: 1rem;
             background-color: #f0f0f0;
+            box-sizing: border-box;
         }
         .container {
             display: flex;
+            flex-direction: column;
             background-color: white;
-            padding: 2rem;
+            padding: 1rem;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
+            width: 100%;
+            max-width: 600px;
         }
         .headline {
             text-align: center;
@@ -30,20 +35,27 @@
         }
         .headline h1 {
             margin-bottom: 0.5rem;
+            font-size: 1.5rem;
         }
         .headline p {
             margin-top: 0;
             color: #666;
+            font-size: 1rem;
         }
         .faction-list {
-            text-align: left;
-            margin-right: 2rem;
-            width: 150px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
         .faction-item {
-            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
+            background-color: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
         }
         .faction-item.selected {
             text-decoration: line-through;
@@ -65,8 +77,8 @@
             align-items: center;
         }
         .dice-container {
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             position: relative;
             margin-bottom: 1rem;
         }
@@ -104,28 +116,29 @@
             z-index: 1;
         }
         .icon {
-            font-size: 3rem;
+            font-size: 2.5rem;
         }
         #selected-faction {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: bold;
             margin-top: 1rem;
             min-height: 1.5em;
         }
         #instruction {
-            font-size: 1rem;
+            font-size: 0.9rem;
             margin-top: 0.5rem;
             color: #666;
         }
         .button-container {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
             width: 100%;
-            max-width: 400px;
             margin-top: 1rem;
         }
         button {
-            font-size: 1rem;
+            font-size: 0.9rem;
             padding: 0.5rem 1rem;
             cursor: pointer;
             display: flex;
@@ -153,6 +166,8 @@
             font-weight: bold;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+            margin-top: 1rem;
         }
         .support-link:hover {
             background-color: #ffd700;
@@ -160,8 +175,8 @@
             box-shadow: 0 6px 8px rgba(0,0,0,0.15);
         }
         .support-link img {
-            width: 30px;
-            height: 30px;
+            width: 25px;
+            height: 25px;
             border-radius: 50%;
             margin-right: 10px;
         }
@@ -179,6 +194,44 @@
         }
         .support-link:hover .sword-icon {
             animation: swing 0.5s ease-in-out;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                padding: 2rem;
+            }
+            .faction-list {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-right: 2rem;
+                margin-bottom: 0;
+            }
+            .headline h1 {
+                font-size: 2rem;
+            }
+            .headline p {
+                font-size: 1.2rem;
+            }
+            .dice-container {
+                width: 200px;
+                height: 200px;
+            }
+            .icon {
+                font-size: 3rem;
+            }
+            #selected-faction {
+                font-size: 1.5rem;
+            }
+            #instruction {
+                font-size: 1rem;
+            }
+            button {
+                font-size: 1rem;
+            }
+            .support-link {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -206,7 +259,7 @@
             </div>
         </div>
     </div>
-    <a href="https://buymeacoffee.com/gameknightv" class="support-link">
+    <a href="https://buymeacoffee.com/gameknightv" class="support-link" class="support-link">
         <img src="https://cdn.buymeacoffee.com/uploads/profile_pictures/2024/06/pxPT8QnFG7SWdvdG.png@300w_0e.webp" alt="Creator's Logo">
         If you like this site, you can buy me a "sword" here
         <span class="sword-icon">🗡️</span>
