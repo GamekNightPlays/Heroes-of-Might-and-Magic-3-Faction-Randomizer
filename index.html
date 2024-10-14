@@ -42,6 +42,18 @@
             color: #666;
             font-size: 1rem;
         }
+		.question-mark-icon {
+    font-size: 3rem;
+    color: #000;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
         .faction-list {
             display: flex;
             flex-wrap: wrap;
@@ -444,102 +456,103 @@
             }
             populateFactionList();
         }
+		
+		function setQuestionMarkIcon() {
+    const iconElement = document.getElementById('icon');
+    iconElement.innerHTML = '<div class="question-mark-icon">?</div>';
+}
 
-        function shuffleIcon() {
-            const iconElement = document.getElementById('icon');
-            let shuffleCount = 0;
-            const availableFactions = factions.filter((_, index) => !excludedFactions.includes(index));
-            
-            // Create an array of factions to cycle through
-            let cycleFactions = [];
+function shuffleIcon() {
+    const iconElement = document.getElementById('icon');
+    let shuffleCount = 0;
+    const availableFactions = factions.filter((_, index) => !excludedFactions.includes(index));
+    
+    // Create an array of factions to cycle through
+    let cycleFactions = [...availableFactions];
+    if (cycleFactions.length === 0) {
+        cycleFactions = [selectedFaction]; // Use the last selected faction if all are excluded
+    }
+    
+    // Add the question mark to the cycle
+    cycleFactions.unshift({ name: 'Question', icon: 'question-mark-icon', color: '#000' });
+    
+    const shuffleInterval = setInterval(() => {
+        const cycleIndex = shuffleCount % cycleFactions.length;
+        const currentFaction = cycleFactions[cycleIndex];
+        
+        if (currentFaction.name === 'Question') {
+            iconElement.innerHTML = '<div class="question-mark-icon">?</div>';
+        } else {
+            const iconStyle = currentFaction.name === 'Tower' 
+                ? `color: ${currentFaction.color}; background-color: ${currentFaction.background}; border-radius: 50%; padding: 10px;`
+                : `color: ${currentFaction.color};`;
+            iconElement.innerHTML = `<i class="${currentFaction.icon}" style="${iconStyle}"></i>`;
+        }
+        
+        shuffleCount++;
+        if (shuffleCount >= 30) {
+            clearInterval(shuffleInterval);
             if (availableFactions.length === 1) {
-                // If only one faction left, alternate between it and an empty icon
-                cycleFactions = [availableFactions[0], null];
-            } else if (availableFactions.length === 2) {
-                // If two factions left, alternate between them
-                cycleFactions = [availableFactions[0], availableFactions[1]];
+                setQuestionMarkIcon();
             } else {
-                // For more than two factions, use all available factions
-                cycleFactions = [...availableFactions];
-            }
-            
-            const shuffleInterval = setInterval(() => {
-                const cycleIndex = shuffleCount % cycleFactions.length;
-                const currentFaction = cycleFactions[cycleIndex];
-                
-                if (currentFaction) {
-                    const iconStyle = currentFaction.name === 'Tower' 
-                        ? `color: ${currentFaction.color}; background-color: ${currentFaction.background}; border-radius: 50%; padding: 10px;`
-                        : `color: ${currentFaction.color};`;
-                    iconElement.innerHTML = `<i class="${currentFaction.icon}" style="${iconStyle}"></i>`;
-                } else {
-                    // Display an empty icon when cycling with one faction
-                    iconElement.innerHTML = '';
-                }
-                
-                shuffleCount++;
-                if (shuffleCount >= 30) {
-                    clearInterval(shuffleInterval);
-                    const selectedIconStyle = selectedFaction.name === 'Tower'
-                        ? `color: ${selectedFaction.color}; background-color: ${selectedFaction.background}; border-radius: 50%; padding: 10px;`
-                        : `color: ${selectedFaction.color};`;
-                    iconElement.innerHTML = `<i class="${selectedFaction.icon}" style="${selectedIconStyle}"></i>`;
-                }
-            }, 50);
-        }
-
-        function randomizeFaction() {
-            const availableFactions = factions.filter((_, index) => !excludedFactions.includes(index));
-            if (availableFactions.length === 0) {
-                document.getElementById('selected-faction').textContent = "All factions have been chosen!";
-                return;
-            }
-            
-            const randomIndex = Math.floor(Math.random() * availableFactions.length);
-            selectedFaction = availableFactions[randomIndex];
-            const originalIndex = factions.indexOf(selectedFaction);
-            excludedFactions.push(originalIndex);
-            
-            shuffleIcon();
-            
-            setTimeout(() => {
-                document.getElementById('selected-faction').textContent = selectedFaction.name;
-                document.getElementById('selected-faction').style.color = selectedFaction.color;
-                if (selectedFaction.name === 'Tower') {
-                    document.getElementById('selected-faction').style.textShadow = '1px 1px 1px #A0A0A0';
-                } else {
-                    document.getElementById('selected-faction').style.textShadow = 'none';
-                }
-                populateFactionList();
-                
-                // Check if this was the last faction
-                if (availableFactions.length === 1) {
-                    setTimeout(() => {
-                        document.getElementById('selected-faction').textContent = "All factions have been chosen!";
-                    }, 1000);
-                }
-            }, 1500);
-        }
-
-        function mulligan() {
-            if (selectedFaction) {
-                const index = factions.indexOf(selectedFaction);
-                excludedFactions = excludedFactions.filter(i => i !== index);
-                randomizeFaction();
+                const selectedIconStyle = selectedFaction.name === 'Tower'
+                    ? `color: ${selectedFaction.color}; background-color: ${selectedFaction.background}; border-radius: 50%; padding: 10px;`
+                    : `color: ${selectedFaction.color};`;
+                iconElement.innerHTML = `<i class="${selectedFaction.icon}" style="${selectedIconStyle}"></i>`;
             }
         }
+    }, 50);
+}
 
-        function reset() {
-            selectedFaction = null;
-            excludedFactions = [];
-            document.getElementById('icon').innerHTML = '';
-            document.getElementById('selected-faction').textContent = "";
-            document.getElementById('selected-faction').style.color = 'initial';
+function randomizeFaction() {
+    const availableFactions = factions.filter((_, index) => !excludedFactions.includes(index));
+    if (availableFactions.length === 0) {
+        document.getElementById('selected-faction').textContent = "All factions have been chosen!";
+        setQuestionMarkIcon();
+        return;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * availableFactions.length);
+    selectedFaction = availableFactions[randomIndex];
+    const originalIndex = factions.indexOf(selectedFaction);
+    excludedFactions.push(originalIndex);
+    
+    shuffleIcon();
+    
+    setTimeout(() => {
+        document.getElementById('selected-faction').textContent = selectedFaction.name;
+        document.getElementById('selected-faction').style.color = selectedFaction.color;
+        if (selectedFaction.name === 'Tower') {
+            document.getElementById('selected-faction').style.textShadow = '1px 1px 1px #A0A0A0';
+        } else {
             document.getElementById('selected-faction').style.textShadow = 'none';
-            populateFactionList();
         }
-
         populateFactionList();
+        
+        // Check if this was the last faction
+        if (availableFactions.length === 1) {
+            setTimeout(() => {
+                document.getElementById('selected-faction').textContent = "All factions have been chosen!";
+                setQuestionMarkIcon();
+            }, 1000);
+        }
+    }, 1500);
+}
+
+function reset() {
+    selectedFaction = null;
+    excludedFactions = [];
+    setQuestionMarkIcon();
+    document.getElementById('selected-faction').textContent = "";
+    document.getElementById('selected-faction').style.color = 'initial';
+    document.getElementById('selected-faction').style.textShadow = 'none';
+    populateFactionList();
+}
+
+// Set the initial question mark icon when the page loads
+window.onload = function() {
+    setQuestionMarkIcon();
+};
     </script>
 </body>
 </html>
