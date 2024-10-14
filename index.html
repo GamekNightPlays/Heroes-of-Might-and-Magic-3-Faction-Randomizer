@@ -448,25 +448,35 @@
         function shuffleIcon() {
             const iconElement = document.getElementById('icon');
             let shuffleCount = 0;
+            const availableFactions = factions.filter((_, index) => !excludedFactions.includes(index));
+            
+            // Create an array of factions to cycle through
+            let cycleFactions = [];
+            if (availableFactions.length === 1) {
+                // If only one faction left, alternate between it and an empty icon
+                cycleFactions = [availableFactions[0], null];
+            } else if (availableFactions.length === 2) {
+                // If two factions left, alternate between them
+                cycleFactions = [availableFactions[0], availableFactions[1]];
+            } else {
+                // For more than two factions, use all available factions
+                cycleFactions = [...availableFactions];
+            }
+            
             const shuffleInterval = setInterval(() => {
-                const availableFactions = factions.filter((_, index) => !excludedFactions.includes(index));
-                let randomFaction;
+                const cycleIndex = shuffleCount % cycleFactions.length;
+                const currentFaction = cycleFactions[cycleIndex];
                 
-                if (availableFactions.length === 2) {
-                    // Alternate between the two remaining factions
-                    randomFaction = availableFactions[shuffleCount % 2];
-                } else if (availableFactions.length === 1) {
-                    // Use the only available faction
-                    randomFaction = availableFactions[0];
+                if (currentFaction) {
+                    const iconStyle = currentFaction.name === 'Tower' 
+                        ? `color: ${currentFaction.color}; background-color: ${currentFaction.background}; border-radius: 50%; padding: 10px;`
+                        : `color: ${currentFaction.color};`;
+                    iconElement.innerHTML = `<i class="${currentFaction.icon}" style="${iconStyle}"></i>`;
                 } else {
-                    // Randomly select from available factions
-                    randomFaction = availableFactions[Math.floor(Math.random() * availableFactions.length)];
+                    // Display an empty icon when cycling with one faction
+                    iconElement.innerHTML = '';
                 }
                 
-                const iconStyle = randomFaction.name === 'Tower' 
-                    ? `color: ${randomFaction.color}; background-color: ${randomFaction.background}; border-radius: 50%; padding: 10px;`
-                    : `color: ${randomFaction.color};`;
-                iconElement.innerHTML = `<i class="${randomFaction.icon}" style="${iconStyle}"></i>`;
                 shuffleCount++;
                 if (shuffleCount >= 30) {
                     clearInterval(shuffleInterval);
