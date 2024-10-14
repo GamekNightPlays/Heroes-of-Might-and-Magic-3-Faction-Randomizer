@@ -26,8 +26,8 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
-            width: 100%;
-            max-width: 600px;
+            width: 600px; /* Set a fixed width */
+            max-width: 100%; /* Ensure it doesn't overflow on smaller screens */
         }
         .headline {
             text-align: center;
@@ -211,8 +211,7 @@
                 padding: 0.5rem;
             }
             .container {
-                padding: 1rem;
-                max-width: 90%;
+                width: 600px; /* Keep the fixed width */
             }
             .headline h1 {
                 font-size: 1.5rem;
@@ -261,7 +260,7 @@
                 padding: 1rem;
             }
             .container {
-                max-width: 80%;
+                width: 600px; /* Keep the fixed width */
             }
             .headline h1 {
                 font-size: 1.8rem;
@@ -291,7 +290,7 @@
                 padding: 2rem;
             }
             .container {
-                max-width: 70%;
+                width: 600px; /* Keep the fixed width */
             }
             .headline h1 {
                 font-size: 2.2rem;
@@ -321,6 +320,7 @@
                 flex-direction: row;
                 align-items: flex-start;
                 padding: 2rem;
+                width: 600px; /* Keep the fixed width */
             }
             .faction-list {
                 flex: 1;
@@ -359,15 +359,6 @@
             }
         }
 
-        @media (max-aspect-ratio: 16/9) {
-            .container {
-                flex-direction: column;
-            }
-            .faction-list {
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -395,7 +386,7 @@
         </div>
     </div>
     <a href="https://buymeacoffee.com/gameknightv" class="support-link">
-        <img src="https://cdn.buymeacoffee.com/uploads/profile_pictures/2024/06/pxPT8QnFG7SWdvdG.png@300w_0e.webp" alt="Creator's Logo">
+        <img src="https://i.ibb.co/VVxhPnM/knight-1.png" alt="Creator's Logo">
         If you like this site, you can buy me a "sword" here
         <span class="sword-icon">🗡️</span>
     </a>
