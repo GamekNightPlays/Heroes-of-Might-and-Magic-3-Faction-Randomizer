@@ -410,42 +410,46 @@
     </a>
 
     <script>
-        const factions = [
-            { name: "Fortress", icon: "fas fa-gopuram", color: "#006400" },
-            { name: "Dungeon", icon: "fas fa-dungeon", color: "#800080" },
-            { name: "Conflux", icon: "fas fa-atom", color: "#FFC0CB" },
-            { name: "Stronghold", icon: "fas fa-fist-raised", color: "#D2B48C" },
-            { name: "Rampart", icon: "fas fa-tree", color: "#00FF00" },
-            { name: "Inferno", icon: "fas fa-fire", color: "#FF0000" },
-            { name: "Castle", icon: "fas fa-chess-rook", color: "#ADD8E6" },
-            { name: "Necropolis", icon: "fas fa-skull", color: "#808080" },
-            { name: "Cove", icon: "fas fa-anchor", color: "#008080" },
-            { name: "Tower", icon: "fas fa-landmark-dome", color: "#FFFFFF", background: "#E0E0E0", border: "1px solid #A0A0A0" }
-        ];
+const factions = [
+    { name: "Fortress", icon: "fas fa-gopuram", color: "#006400" },
+    { name: "Dungeon", icon: "fas fa-dungeon", color: "#800080" },
+    { name: "Conflux", icon: "fas fa-atom", color: "#FFC0CB" },
+    { name: "Stronghold", icon: "fas fa-fist-raised", color: "#D2B48C" },
+    { name: "Rampart", icon: "fas fa-tree", color: "#00FF00" },
+    { name: "Inferno", icon: "fas fa-fire", color: "#FF0000" },
+    { name: "Castle", icon: "fas fa-chess-rook", color: "#ADD8E6" },
+    { name: "Necropolis", icon: "fas fa-skull", color: "#808080" },
+    { name: "Cove", icon: "fas fa-anchor", color: "#008080" },
+    { name: "Tower", icon: "fas fa-landmark-dome", color: "#FFFFFF", background: "#E0E0E0", border: "1px solid #A0A0A0" }
+];
 
-        let selectedFaction = null;
-        let excludedFactions = [];
+let selectedFaction = null;
+let excludedFactions = [];
 
-        function populateFactionList() {
-            const factionList = document.getElementById('factionList');
-            factionList.innerHTML = '';
-            factions.forEach((faction, index) => {
-                const item = document.createElement('div');
-                item.className = 'faction-item';
-                if (excludedFactions.includes(index)) {
-                    item.classList.add('excluded');
-                }
-                const iconStyle = `background-color: ${faction.background || faction.color}; ${faction.border ? faction.border : ''}`;
-                item.innerHTML = `
-                    <span class="faction-icon" style="${iconStyle}">
-                        <i class="${faction.icon}" style="font-size: 12px; color: ${faction.name === 'Tower' ? faction.color : 'inherit'};"></i>
-                    </span>
-                    ${faction.name}
-                `;
-                item.onclick = () => toggleFactionExclusion(index);
-                factionList.appendChild(item);
-            });
+function populateFactionList() {
+    const factionList = document.getElementById('factionList');
+    factionList.innerHTML = '';
+    factions.forEach((faction, index) => {
+        const item = document.createElement('div');
+        item.className = 'faction-item';
+        if (excludedFactions.includes(index)) {
+            item.classList.add('excluded');
         }
+        const iconStyle = `background-color: ${faction.background || faction.color}; ${faction.border ? faction.border : ''}`;
+        item.innerHTML = `
+            <span class="faction-icon" style="${iconStyle}">
+                <i class="${faction.icon}" style="font-size: 12px; color: ${faction.name === 'Tower' ? faction.color : 'inherit'};"></i>
+            </span>
+            ${faction.name}
+        `;
+        item.onclick = () => toggleFactionExclusion(index);
+        factionList.appendChild(item);
+    });
+}
+		function setQuestionMarkIcon() {
+    const iconElement = document.getElementById('icon');
+    iconElement.innerHTML = '<div class="question-mark-icon">?</div>';
+}
 
         function toggleFactionExclusion(index) {
             const factionIndex = excludedFactions.indexOf(index);
@@ -456,11 +460,6 @@
             }
             populateFactionList();
         }
-		
-		function setQuestionMarkIcon() {
-    const iconElement = document.getElementById('icon');
-    iconElement.innerHTML = '<div class="question-mark-icon">?</div>';
-}
 
 function shuffleIcon() {
     const iconElement = document.getElementById('icon');
@@ -492,7 +491,7 @@ function shuffleIcon() {
         shuffleCount++;
         if (shuffleCount >= 30) {
             clearInterval(shuffleInterval);
-            if (availableFactions.length === 1) {
+            if (availableFactions.length === 0) {
                 setQuestionMarkIcon();
             } else {
                 const selectedIconStyle = selectedFaction.name === 'Tower'
@@ -549,10 +548,14 @@ function reset() {
     populateFactionList();
 }
 
-// Set the initial question mark icon when the page loads
-window.onload = function() {
+// Initialize the page
+function initPage() {
+    populateFactionList();
     setQuestionMarkIcon();
-};
+}
+
+// Set up the page when it loads
+window.onload = initPage;
     </script>
 </body>
 </html>
