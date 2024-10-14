@@ -450,7 +450,19 @@
             let shuffleCount = 0;
             const shuffleInterval = setInterval(() => {
                 const availableFactions = factions.filter((_, index) => !excludedFactions.includes(index));
-                const randomFaction = availableFactions[Math.floor(Math.random() * availableFactions.length)];
+                let randomFaction;
+                
+                if (availableFactions.length === 2) {
+                    // Alternate between the two remaining factions
+                    randomFaction = availableFactions[shuffleCount % 2];
+                } else if (availableFactions.length === 1) {
+                    // Use the only available faction
+                    randomFaction = availableFactions[0];
+                } else {
+                    // Randomly select from available factions
+                    randomFaction = availableFactions[Math.floor(Math.random() * availableFactions.length)];
+                }
+                
                 const iconStyle = randomFaction.name === 'Tower' 
                     ? `color: ${randomFaction.color}; background-color: ${randomFaction.background}; border-radius: 50%; padding: 10px;`
                     : `color: ${randomFaction.color};`;
@@ -472,6 +484,7 @@
                 document.getElementById('selected-faction').textContent = "All factions have been chosen!";
                 return;
             }
+            
             const randomIndex = Math.floor(Math.random() * availableFactions.length);
             selectedFaction = availableFactions[randomIndex];
             const originalIndex = factions.indexOf(selectedFaction);
@@ -488,6 +501,13 @@
                     document.getElementById('selected-faction').style.textShadow = 'none';
                 }
                 populateFactionList();
+                
+                // Check if this was the last faction
+                if (availableFactions.length === 1) {
+                    setTimeout(() => {
+                        document.getElementById('selected-faction').textContent = "All factions have been chosen!";
+                    }, 1000);
+                }
             }, 1500);
         }
 
