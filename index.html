@@ -6,173 +6,369 @@
     <title>Heroes III Faction Randomizer</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
-/* Desktop styles (default) */
-body {
-    padding: 2rem;
-}
-.container {
-    width: 1000px; /* Fixed width for desktop */
-    max-width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 2rem;
-}
-.faction-list {
-    flex: 1;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-right: 2rem;
-    margin-bottom: 0;
-}
-.selector {
-    flex: 1;
-}
-.headline h1 {
-    font-size: 2rem;
-}
-.headline p {
-    font-size: 1.2rem;
-}
-.dice-container {
-    width: 200px;
-    height: 200px;
-}
-.icon {
-    font-size: 3rem;
-}
-#selected-faction {
-    font-size: 1.5rem;
-}
-#instruction {
-    font-size: 1rem;
-}
-button {
-    font-size: 1rem;
-}
-.support-link {
-    font-size: 1rem;
-}
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            background-color: #f0f0f0;
+            box-sizing: border-box;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+        .headline {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .headline h1 {
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        .headline p {
+            margin-top: 0;
+            color: #666;
+            font-size: 1rem;
+        }
+        .faction-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .faction-item {
+            display: flex;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .faction-item.selected {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        .faction-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 0.5rem;
+        }
+        .selector {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dice-container {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            margin-bottom: 1rem;
+            cursor: pointer; /* Add cursor pointer to indicate clickable */
+        }
+        .dice {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .dice::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 36deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff);
+            animation: rotate 2.5s linear infinite;
+        }
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .dice-content {
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+        .icon {
+            font-size: 2.5rem;
+        }
+        #selected-faction {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            min-height: 1.5em;
+        }
+        #instruction {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: #666;
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+		button {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        button i {
+            margin-right: 0.5rem;
+        }
+        button span {
+            margin-left: 0.5rem; /* Add space between icon and text */
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        button i {
+            margin-right: 0.5rem;
+        }
+        .support-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f9c300;
+            color: #000000;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        .support-link:hover {
+            background-color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        .support-link img {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .support-link .sword-icon {
+            margin-left: 10px;
+            font-size: 1.2em;
+        }
+        @keyframes swing {
+            0% { transform: rotate(0deg); }
+            20% { transform: rotate(15deg); }
+            40% { transform: rotate(-10deg); }
+            60% { transform: rotate(5deg); }
+            80% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .support-link:hover .sword-icon {
+            animation: swing 0.5s ease-in-out;
+        }
 
-/* Tablet styles */
-@media (max-width: 1024px) {
-    body {
-        padding: 1rem;
-    }
-    .container {
-        width: 90%;
-        flex-direction: column;
-        padding: 1rem;
-    }
-    .faction-list {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-right: 0;
-        margin-bottom: 1rem;
-    }
-    .headline h1 {
-        font-size: 1.8rem;
-    }
-    .headline p {
-        font-size: 1rem;
-    }
-    .dice-container {
-        width: 180px;
-        height: 180px;
-    }
-    .icon {
-        font-size: 2.8rem;
-    }
-    #selected-faction {
-        font-size: 1.4rem;
-    }
-}
+        @media (max-width: 1080px) {
+            body {
+                padding: 0.5rem;
+            }
+            .container {
+                padding: 1rem;
+                max-width: 90%;
+            }
+            .headline h1 {
+                font-size: 1.5rem;
+            }
+            .headline p {
+                font-size: 0.9rem;
+            }
+            .faction-list {
+                flex-direction: row;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+            .faction-item {
+                font-size: 0.8rem;
+                padding: 0.2rem 0.4rem;
+            }
+            .dice-container {
+                width: 120px;
+                height: 120px;
+            }
+            .icon {
+                font-size: 2rem;
+            }
+            #selected-faction {
+                font-size: 1.2rem;
+            }
+            #instruction {
+                font-size: 0.8rem;
+            }
+            button {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+            .support-link {
+                font-size: 0.8rem;
+                padding: 8px 16px;
+            }
+            .support-link img {
+                width: 20px;
+                height: 20px;
+            }
+        }
 
-/* Mobile styles (including 1080p phones) */
-@media (max-width: 1080px) {
-    body {
-        padding: 0.5rem;
-    }
-    .container {
-        width: 95%;
-        padding: 0.5rem;
-    }
-    .headline h1 {
-        font-size: 1.5rem;
-    }
-    .headline p {
-        font-size: 0.9rem;
-    }
-    .faction-item {
-        font-size: 0.8rem;
-        padding: 0.2rem 0.4rem;
-    }
-    .dice-container {
-        width: 120px;
-        height: 120px;
-    }
-    .icon {
-        font-size: 2rem;
-    }
-    #selected-faction {
-        font-size: 1.2rem;
-    }
-    #instruction {
-        font-size: 0.8rem;
-    }
-    button {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
-    }
-    .support-link {
-        font-size: 0.8rem;
-        padding: 8px 16px;
-    }
-    .support-link img {
-        width: 20px;
-        height: 20px;
-    }
-}
+        @media (min-width: 1081px) and (max-width: 1920px) {
+            body {
+                padding: 1rem;
+            }
+            .container {
+                max-width: 80%;
+            }
+            .headline h1 {
+                font-size: 1.8rem;
+            }
+            .headline p {
+                font-size: 1rem;
+            }
+            .faction-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .dice-container {
+                width: 180px;
+                height: 180px;
+            }
+            .icon {
+                font-size: 2.8rem;
+            }
+            #selected-faction {
+                font-size: 1.4rem;
+            }
+        }
 
-/* 16:9 aspect ratio adjustment */
-@media (max-aspect-ratio: 16/9) {
-    .container {
-        flex-direction: column;
-    }
-    .faction-list {
-        margin-right: 0;
-        margin-bottom: 1rem;
-    }
-}
+        @media (min-width: 1921px) {
+            body {
+                padding: 2rem;
+            }
+            .container {
+                max-width: 70%;
+            }
+            .headline h1 {
+                font-size: 2.2rem;
+            }
+            .headline p {
+                font-size: 1.2rem;
+            }
+            .faction-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .dice-container {
+                width: 220px;
+                height: 220px;
+            }
+            .icon {
+                font-size: 3.2rem;
+            }
+            #selected-faction {
+                font-size: 1.6rem;
+            }
+        }
 
-/* High-resolution screens (above 1080p) */
-@media (min-width: 1921px) {
-    body {
-        padding: 2rem;
-    }
-    .container {
-        width: 1200px;
-    }
-    .headline h1 {
-        font-size: 2.2rem;
-    }
-    .headline p {
-        font-size: 1.2rem;
-    }
-    .dice-container {
-        width: 220px;
-        height: 220px;
-    }
-    .icon {
-        font-size: 3.2rem;
-    }
-    #selected-faction {
-        font-size: 1.6rem;
-    }
-}
-</style>
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                align-items: flex-start;
+                padding: 2rem;
+            }
+            .faction-list {
+                flex: 1;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-right: 2rem;
+                margin-bottom: 0;
+            }
+            .selector {
+                flex: 1;
+            }
+            .headline h1 {
+                font-size: 2rem;
+            }
+            .headline p {
+                font-size: 1.2rem;
+            }
+            .dice-container {
+                width: 200px;
+                height: 200px;
+            }
+            .icon {
+                font-size: 3rem;
+            }
+            #selected-faction {
+                font-size: 1.5rem;
+            }
+            #instruction {
+                font-size: 1rem;
+            }
+            button {
+                font-size: 1rem;
+            }
+            .support-link {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-aspect-ratio: 16/9) {
+            .container {
+                flex-direction: column;
+            }
+            .faction-list {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="headline">
@@ -199,7 +395,7 @@ button {
         </div>
     </div>
     <a href="https://buymeacoffee.com/gameknightv" class="support-link">
-        <img src="https://i.ibb.co/gydXBqt/knight-1.png" alt="Creator's Logo">
+        <img src="https://cdn.buymeacoffee.com/uploads/profile_pictures/2024/06/pxPT8QnFG7SWdvdG.png@300w_0e.webp" alt="Creator's Logo">
         If you like this site, you can buy me a "sword" here
         <span class="sword-icon">🗡️</span>
     </a>
