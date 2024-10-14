@@ -397,7 +397,7 @@
         <span class="sword-icon">🗡️</span>
     </a>
 
-       <script>
+    <script>
         const factions = [
             { name: "Fortress", icon: "fas fa-gopuram", color: "#006400" },
             { name: "Dungeon", icon: "fas fa-dungeon", color: "#800080" },
@@ -469,11 +469,13 @@
         function randomizeFaction() {
             const availableFactions = factions.filter((_, index) => !excludedFactions.includes(index));
             if (availableFactions.length === 0) {
-                document.getElementById('selected-faction').textContent = "All factions have been excluded!";
+                document.getElementById('selected-faction').textContent = "All factions have been chosen!";
                 return;
             }
             const randomIndex = Math.floor(Math.random() * availableFactions.length);
             selectedFaction = availableFactions[randomIndex];
+            const originalIndex = factions.indexOf(selectedFaction);
+            excludedFactions.push(originalIndex);
             
             shuffleIcon();
             
@@ -485,11 +487,14 @@
                 } else {
                     document.getElementById('selected-faction').style.textShadow = 'none';
                 }
+                populateFactionList();
             }, 1500);
         }
 
         function mulligan() {
             if (selectedFaction) {
+                const index = factions.indexOf(selectedFaction);
+                excludedFactions = excludedFactions.filter(i => i !== index);
                 randomizeFaction();
             }
         }
